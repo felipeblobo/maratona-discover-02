@@ -11,6 +11,11 @@
     "type": "git",
     "url": "git+https://github.com/felipeblobo/maratona-discover-02.git"
   },
+  "prettier": {
+    "singleQuote": true,
+    "semi": false,
+    "trailingComma": "none"
+  },
   "keywords": [
     "nodejs",
     "Javascript"
