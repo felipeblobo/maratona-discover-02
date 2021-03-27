@@ -2,19 +2,19 @@ const express = require('express');
 const routes = express.Router();
 
 routes.get("/", (req, res) => {
-    res.sendFile(__dirname + "/views/index.html");
+    res.render("index");
   });
   
 routes.get('/job', (req, res) => {
-    res.sendFile(__dirname + "/views/job.html");
+    res.render("job");
   });
   
-routes.get('/job-edit', (req, res) => {
-    res.sendFile(__dirname + "/views/job.html");
+routes.get('/job/edit', (req, res) => {
+    res.render("job-edit");
   });
   
 routes.get('/profile', (req, res) => {
-    res.sendFile(__dirname + "/views/profile.html");
+    res.render("profile");
   });
   
 module.exports = routes;
