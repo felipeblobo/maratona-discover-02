@@ -29,7 +29,18 @@ const jobs = [
 ];
 
 routes.get('/', (req, res) => {
-  res.render('index', { jobs });
+  const updatedJobs = jobs.map((job) => {
+    
+    const remainingDays = Math.round(job['total-hours'] / job['daily-hours'])
+    const createdDate = new Date(job.created_at)
+    const finalDay = createdDate.getDate() + Number(remainingDays)
+
+    return job
+  })
+
+  
+  
+  return res.render('index', { jobs });
 });
 
 routes.get('/job', (req, res) => {
