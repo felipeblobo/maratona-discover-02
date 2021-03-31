@@ -1,5 +1,5 @@
-const express = require('express')
-const routes = express.Router()
+const express = require('express');
+const routes = express.Router();
 
 const profile = {
   name: 'Felipe',
@@ -8,27 +8,54 @@ const profile = {
   'monthly-budget': 3500,
   'days-per-week': 5,
   'hours-per-day': 4,
-  'vacation-per-year': 4
-}
+  'vacation-per-year': 4,
+};
+
+const jobs = [
+  {
+    id: 1,
+    name: 'Pizzaria Italiana',
+    'daily-hours': '5',
+    'total-hours': '50',
+    created_at: Date.now(),
+  },
+  {
+    id: 2,
+    name: 'Black Code',
+    'daily-hours': '1',
+    'total-hours': '13',
+    created_at: Date.now(),
+  },
+];
 
 routes.get('/', (req, res) => {
-  res.render('index')
-})
+  res.render('index', { jobs });
+});
 
 routes.get('/job', (req, res) => {
-  res.render('job')
-})
+  res.render('job');
+});
 
 routes.post('/job', (req, res) => {
-  console.log(req.body)
-})
+  const jobId = jobs.length == 0 ? 1 : jobs.length + 1;
+
+  jobs.push({
+    id: jobId,
+    name: req.body.name,
+    'daily-hours': req.body['daily-hours'],
+    'total-hours': req.body['total-hours'],
+    created_at: Date.now(),
+  });
+  console.log(jobs);
+  return res.redirect('/');
+});
 
 routes.get('/job/edit', (req, res) => {
-  res.render('job-edit')
-})
+  res.render('job-edit');
+});
 
 routes.get('/profile', (req, res) => {
-  res.render('profile', { profile })
-})
+  res.render('profile', { profile });
+});
 
-module.exports = routes
+module.exports = routes;

@@ -13,8 +13,10 @@
   },
   "prettier": {
     "singleQuote": true,
-    "semi": false,
-    "trailingComma": "none"
+    "semi": true,
+    "trailingComma": "all"
+    
+
   },
   "keywords": [
     "nodejs",
