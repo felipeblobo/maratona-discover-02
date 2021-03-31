@@ -3,11 +3,12 @@ const routes = express.Router()
 
 const profile = {
   name: 'Felipe',
-  avatar: 'https://avatars.githubusercontent.com/u/69439442?s=400&u=60eef3d20a9252062651358f05a66ed6e73e2876&v=4',
-  "monthly-budget": 3500,
-  "days-per-week": 5,
-  "hours-per-day": 4,
-  "vacation-per-year": 4
+  avatar:
+    'https://avatars.githubusercontent.com/u/69439442?s=400&u=60eef3d20a9252062651358f05a66ed6e73e2876&v=4',
+  'monthly-budget': 3500,
+  'days-per-week': 5,
+  'hours-per-day': 4,
+  'vacation-per-year': 4
 }
 
 routes.get('/', (req, res) => {
@@ -18,12 +19,16 @@ routes.get('/job', (req, res) => {
   res.render('job')
 })
 
+routes.post('/job', (req, res) => {
+  console.log(req.body)
+})
+
 routes.get('/job/edit', (req, res) => {
   res.render('job-edit')
 })
 
 routes.get('/profile', (req, res) => {
-  res.render('profile', {profile})
+  res.render('profile', { profile })
 })
 
 module.exports = routes
