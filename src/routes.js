@@ -9,41 +9,56 @@ const profile = {
   'days-per-week': 5,
   'hours-per-day': 4,
   'vacation-per-year': 4,
+  'hour-price': 80
 };
 
 const jobs = [
   {
     id: 1,
     name: 'Pizzaria Italiana',
-    'daily-hours': '5',
-    'total-hours': '50',
+    'daily-hours': '2',
+    'total-hours': '80',
     created_at: Date.now(),
   },
   {
     id: 2,
     name: 'Black Code',
-    'daily-hours': '1',
-    'total-hours': '13',
+    'daily-hours': '24',
+    'total-hours': '1',
     created_at: Date.now(),
   },
 ];
 
+
+function remainingDays(job) {
+  const remainingDays = Math.round(job['total-hours'] / job['daily-hours'])
+  const createdDate = new Date(job.created_at)
+  const finalDay = createdDate.getDate() + Number(remainingDays)
+  const finalDate = createdDate.setDate(finalDay)
+
+  const timeDiferrence = finalDate - Date.now()
+
+  const dayInMs = 1000 * 60 * 60 * 24
+  const dayDiff = Math.round(timeDiferrence / dayInMs)
+
+  return dayDiff
+}
+
 routes.get('/', (req, res) => {
   const updatedJobs = jobs.map((job) => {
+
+    const remaining = remainingDays(job)
+    const status = remaining <= 0 ? 'done' : 'progress'
     
-    const remainingDays = Math.round(job['total-hours'] / job['daily-hours'])
-    const createdDate = new Date(job.created_at)
-    const finalDay = createdDate.getDate() + Number(remainingDays)
-    const finalDate = createdDate.setDate(finalDay)
-
-    const timeDiferrence = finalDate - Date.now()
-
-    return job
-  })
-
+    return {
+      ...job,
+      remaining,
+      status,
+      budget: profile['hour-price'] * job['total-hours']
+      }
+  })  
   
-  
-  return res.render('index', { jobs });
+  return res.render('index', { jobs: updatedJobs });
 });
 
 routes.get('/job', (req, res) => {
