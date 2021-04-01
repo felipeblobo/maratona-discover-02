@@ -6,23 +6,36 @@ const Profile = {
     name: 'Felipe',
     avatar:
       'https://avatars.githubusercontent.com/u/69439442?s=400&u=60eef3d20a9252062651358f05a66ed6e73e2876&v=4',
-    'monthly-budget': 3500,
+    'monthly-budget': 4000,
     'days-per-week': 5,
-    'hours-per-day': 4,
+    'hours-per-day': 3,
     'vacation-per-year': 4,
     'hour-price': 80,
   },
 
   controllers: {
-    
     profile(req, res) {
       return res.render('profile', { profile: Profile.data });
     },
 
     update(req, res) {
-      
-    }
-  }
+      const data = req.body;
+      const weeksPerYear = 52;
+      const weeksPerMonth = (weeksPerYear - data['vacation-per-year']) / 12;
+      const weekTotalHours = data['hours-per-day'] * data['days-per-week'];
+      const monthlyTotalHours = weekTotalHours * weeksPerMonth;
+
+      const hourPrice = data['monthly-budget'] / monthlyTotalHours;
+
+      Profile.data = {
+        ...Profile.data,
+        ...req.body,
+        'hour-price': hourPrice,
+      };
+
+      return res.redirect('/profile');
+    },
+  },
 };
 
 const Job = {
@@ -30,16 +43,18 @@ const Job = {
     {
       id: 1,
       name: 'Pizzaria Italiana',
-      'daily-hours': '2',
-      'total-hours': '80',
+      'daily-hours': 2,
+      'total-hours': 80,
       created_at: Date.now(),
+      
     },
     {
       id: 2,
       name: 'Black Code',
-      'daily-hours': '24',
-      'total-hours': '1',
+      'daily-hours': 24,
+      'total-hours': 1,
       created_at: Date.now(),
+     
     },
   ],
   controllers: {
@@ -52,7 +67,7 @@ const Job = {
           ...job,
           remaining,
           status,
-          budget: Profile.data['hour-price'] * job['total-hours'],
+          budget: Job.services.calculateBudget(job, Profile.data['hour-price'])
         };
       });
 
@@ -77,9 +92,20 @@ const Job = {
       return res.redirect('/');
     },
 
-    edit(req, res) {
-      return res.render('job-edit');
-    }
+    show(req, res) {
+
+      const jobId = req.params.id;
+
+      const job = Job.data.find(job => Number(job.id) === Number(jobId));
+
+      if (!job) {
+        return res.send("This Job doesn't exist.")
+      }
+
+      job.budget = Job.services.calculateBudget(job, Profile.data['hour-price']);
+
+        return res.render('job-edit', { job });
+    },
   },
   services: {
     remainingDays(job) {
@@ -95,6 +121,8 @@ const Job = {
 
       return dayDiff;
     },
+
+    calculateBudget: (job, hourPrice) => hourPrice * job['total-hours']
   },
 };
 
@@ -104,8 +132,10 @@ routes.get('/job', Job.controllers.create);
 
 routes.post('/job', Job.controllers.save);
 
-routes.get('/job/edit', Job.controllers.edit);
+routes.get('/job/:id', Job.controllers.show);
 
 routes.get('/profile', Profile.controllers.profile);
+
+routes.post('/profile', Profile.controllers.update);
 
 module.exports = routes;
