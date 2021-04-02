@@ -30,7 +30,7 @@ const Profile = {
       Profile.data = {
         ...Profile.data,
         ...req.body,
-        'hour-price': hourPrice,
+        'hour-price': hourPrice
       };
 
       return res.redirect('/profile');
@@ -43,18 +43,16 @@ const Job = {
     {
       id: 1,
       name: 'Pizzaria Italiana',
-      'daily-hours': 2,
-      'total-hours': 80,
-      created_at: Date.now(),
-      
+      "daily-hours": 2,
+      "total-hours": 80,
+      created_at: Date.now()
     },
     {
       id: 2,
       name: 'Black Code',
-      'daily-hours': 24,
-      'total-hours': 1,
-      created_at: Date.now(),
-     
+      "daily-hours": 24,
+      "total-hours": 1,
+      created_at: Date.now()
     },
   ],
   controllers: {
@@ -67,7 +65,7 @@ const Job = {
           ...job,
           remaining,
           status,
-          budget: Job.services.calculateBudget(job, Profile.data['hour-price'])
+          budget: Job.services.calculateBudget(job, Profile.data["hour-price"]),
         };
       });
 
@@ -79,10 +77,10 @@ const Job = {
     },
 
     save(req, res) {
-      const jobId = Job.data.length == 0 ? 1 : Job.data.length + 1;
+      const lastId = Job.data[Job.data.length - 1]?.id || 0;
 
       Job.data.push({
-        id: jobId,
+        id: lastId + 1,
         name: req.body.name,
         'daily-hours': req.body['daily-hours'],
         'total-hours': req.body['total-hours'],
@@ -93,19 +91,62 @@ const Job = {
     },
 
     show(req, res) {
-
       const jobId = req.params.id;
 
       const job = Job.data.find(job => Number(job.id) === Number(jobId));
 
       if (!job) {
-        return res.send("This Job doesn't exist.")
+        return res.send("This Job doesn't exist.");
       }
 
-      job.budget = Job.services.calculateBudget(job, Profile.data['hour-price']);
+      job.budget = Job.services.calculateBudget(
+        job,
+        Profile.data['hour-price'],
+      );
 
-        return res.render('job-edit', { job });
+      return res.render('job-edit', { job });
     },
+
+    update(req, res) {
+      const jobId = req.params.id;
+
+      const job = Job.data.find(job => Number(job.id) === Number(jobId));
+
+      if (!job) {
+        return res.send("Este Job não existe!");
+      }
+
+      // if(job['total-hours'] === "") {
+      //   alert("Preencha o campo de horas totais.")
+      // }
+
+     const updatedJob = {
+        ...job,
+        name: req.body.name,
+        "total-hours": req.body["total-hours"],
+        "daily-hours": req.body["daily-hours"],
+
+      }
+
+      Job.data = Job.data.map(job => {
+
+        if(Number(job.id) === Number(jobId)){
+          job = updatedJob
+        }
+        return job
+      })
+
+      res.redirect('/')
+
+    },
+
+    delete(req, res) {
+      const jobId = req.params.id;
+
+      Job.data = Job.data.filter(job => Number(job.id) !== Number(jobId))
+
+      return res.redirect('/')
+    }
   },
   services: {
     remainingDays(job) {
@@ -122,9 +163,10 @@ const Job = {
       return dayDiff;
     },
 
-    calculateBudget: (job, hourPrice) => hourPrice * job['total-hours']
+    calculateBudget: (job, hourPrice) => hourPrice * job['total-hours'],
   },
 };
+
 
 routes.get('/', Job.controllers.index);
 
@@ -134,8 +176,12 @@ routes.post('/job', Job.controllers.save);
 
 routes.get('/job/:id', Job.controllers.show);
 
+routes.post('/job/:id', Job.controllers.update);
+
 routes.get('/profile', Profile.controllers.profile);
 
 routes.post('/profile', Profile.controllers.update);
+
+routes.post('/job/delete/:id', Job.controllers.delete)
 
 module.exports = routes;
