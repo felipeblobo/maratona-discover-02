@@ -33,7 +33,7 @@
           <span id="notification">
             <img src="/images/alert-octagon.svg" alt="Alerta" />
 
-            <% if (freeHours == 0) { %>
+            <% if (freeHours <= 0) { %>
             Você não tem mais tempo livre
             <% } else { %>
             Você tem <%= freeHours %>  horas livres no seu dia  
