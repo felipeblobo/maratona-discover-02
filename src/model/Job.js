@@ -9,7 +9,7 @@ let data = [
     {
       id: 2,
       name: 'Black Code',
-      "daily-hours": 24,
+      "daily-hours": 2,
       "total-hours": 1,
       created_at: Date.now()
     }
