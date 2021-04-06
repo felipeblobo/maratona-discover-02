@@ -99,7 +99,7 @@
               </div>
               <div class="amount column">
                 <span>Valor</span>
-                <p><%= job.budget.toFixed(2).replace('.', ',')%> </p>
+                <p>R$ <%= job.budget.toFixed(2).replace('.', ',') %> </p>
               </div>
               <div class="status badge column">
                 <%= job.status == 'done' ? 'Finalizado' : 'Em andamento' %> 

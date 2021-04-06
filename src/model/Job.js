@@ -20,6 +20,10 @@ let data = [
       return data;
     },
 
+    create(newJob) {
+      data.push(newJob)
+    },
+
     update(newJobs) {
       data = newJobs;
     },
