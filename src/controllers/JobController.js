@@ -24,42 +24,29 @@ module.exports = {
     const jobId = req.params.id;
     const jobs = await Job.get();
 
-    const job = jobs.find((job) => Number(job.id) === Number(jobId));
+    const job = jobs.find(job => Number(job.id) === Number(jobId));
 
     if (!job) {
       return res.send("This Job doesn't exist.");
     }
-
-    job.budget = JobUtils.calculateBudget(job, await Profile.get()['hour-price']);
+    const profile = await Profile.get()
+    console.log(profile)
+    job.budget = JobUtils.calculateBudget(job, profile['hour-price']);
 
     return res.render('job-edit', { job });
   },
 
   async update(req, res) {
     const jobId = req.params.id;
-    const jobs = await Job.get();
-
-    const job = jobs.find((job) => Number(job.id) === Number(jobId));
-
-    if (!job) {
-      return res.send('Este Job não existe!');
-    }
+  
 
     const updatedJob = {
-      ...job,
       name: req.body.name,
       'total-hours': req.body['total-hours'],
       'daily-hours': req.body['daily-hours'],
     };
 
-   const newJobs = jobs.map((job) => {
-      if (Number(job.id) === Number(jobId)) {
-        job = updatedJob;
-      }
-      return job;
-    });
-
-    Job.update(newJobs);
+    await Job.update(updatedJob, jobId);
 
     res.redirect('/');
   },
